@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+    <head>
+        <title><%= htmlWebpackPlugin.options.title %></title>
+        <% for (var css in htmlWebpackPlugin.options.css) { %>
+        <link href="<%= htmlWebpackPlugin.options.css[css] %>" rel="stylesheet">
+        <% } %>
+    </head>
+    <body>
+        <h1 id="box">Home baby!</h1>
+        <a href="./teste.html">Link</a>
+        
+        <% for (var js in htmlWebpackPlugin.options.js) { %>
+        <script src="<%= htmlWebpackPlugin.options.js[js] %>"></script>
+        <% } %>
+    </body>
+</html>
