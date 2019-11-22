@@ -1,5 +1,6 @@
 const path = require('path')
 // const webpack = require('webpack')
+const glob = require('glob')
 const MiniCssExtractPlugin = require("mini-css-extract-plugin")
 const HtmlWebpackPlugin = require ('html-webpack-plugin')
 
@@ -12,20 +13,26 @@ var pages = [
     {
         url: /^\/$/,
         file: '/home.html',
-        title: 'Home',
+        title: 'home',
         css: [master.css, 'css/home.css'],
         js: [master.js, 'js/home.js'],
-        source: './src/home.html',
+        source: {
+            html: './src/home.html',
+            js: './src/js/templates/home.js'
+        },
         inject: false,
         dist: './home.html',
     },
     {
         url: /^\/teste/,
         file: '/teste.html',
-        title: 'Teste',
+        title: 'teste',
         css: [master.css, 'css/teste.css'],
         js: [master.js, 'js/teste.js'],
-        source: './src/teste.html',
+        source: {
+            html: './src/teste.html',
+            js: './src/js/templates/teste.js'
+        },
         inject: false,
         dist: './teste.html',
     }
@@ -57,7 +64,7 @@ function pageGenerator(data) {
                     title: page.title,
                     css: page.css,
                     js: page.js,
-                    template: page.source,
+                    template: page.source.html,
                     inject: false,
                     filename: page.dist,
                 })
@@ -66,6 +73,21 @@ function pageGenerator(data) {
     )
 
     return arr
+}
+
+function getFiles(paths) {
+    var ret = {
+        main: './src/js/index.js',
+    }
+
+    paths.forEach(
+        function(path) {
+            var fileName = path.split('/').slice(-1)[0].split('.js')[0];
+            ret[fileName] = path;
+        }
+    );
+
+    return ret;
 }
 
 var routes = routeGenerator(pages)
@@ -85,15 +107,15 @@ module.exports = {
         }
     },
 
-    entry: {
-        main: './src/js/index.js',
-        teste: './src/js/templates/teste.js',
-        home: './src/js/templates/home.js'
+    // entry: './src/js/index.js',
 
-        // main: buildEntryPoint('./src/js/templates/index.js'),
-        // teste: buildEntryPoint('./src/js/templates/teste.js'),
-        // home: buildEntryPoint('./src/js/templates/home.js')
-    },
+    // entry: {
+    //     main: './src/js/index.js',
+    //     teste: './src/js/templates/teste.js',
+    //     home: './src/js/templates/home.js'
+    // },
+
+    entry: getFiles(glob.sync(__dirname + '/src/js/templates/*.js')),
 
     output: {  
         path: path.resolve('dist'),  
